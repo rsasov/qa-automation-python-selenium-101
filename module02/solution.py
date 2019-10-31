@@ -86,8 +86,7 @@ def add_fibonacci(lst):
     :param lst - initial fibonacci sequence
     :return extended sequence with next number
     """
-    size = len(lst)
-    next_fibonacci_number = lst[size - 2] + lst[size - 1]
+    next_fibonacci_number = lst[-2] + lst[-1]
     lst.append(next_fibonacci_number)
     return lst
 
