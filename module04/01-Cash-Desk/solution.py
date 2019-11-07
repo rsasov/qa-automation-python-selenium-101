@@ -75,7 +75,3 @@ class CashDesk:
                 continue
             result += "\n{}$ bills - {}".format(bill.__int__(), self.cash.count(bill))
         return result
-
-
-if __name__ == "__main__":
-    CashDesk.inspect(CashDesk())
