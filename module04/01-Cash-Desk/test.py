@@ -74,5 +74,6 @@ We have the following count of bills, sorted in ascending order:
 
         self.assertEqual(self.desk.inspect(), expected)
 
+
 if __name__ == '__main__':
     unittest.main()

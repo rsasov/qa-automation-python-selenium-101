@@ -2,7 +2,7 @@ ZERO = 0
 
 
 class Bill:
-
+    """Bill represents a single bill"""
     def __init__(self, amount):
         self.checkParameter(amount)
         self.amount = amount
@@ -24,13 +24,13 @@ class Bill:
 
     def checkParameter(self, amount):
         if not isinstance(amount, int):
-            raise TypeError("Amount should be int")
+            raise TypeError("Amount should be of type int")
         if amount < ZERO:
-            raise ValueError("Negative amount for Bill is not supported")
+            raise ValueError("Negative amount is not supported")
 
 
 class BatchBill:
-
+    """BatchBill represents a batch of bills"""
     def __init__(self, batch):
         self.batch = batch
 
@@ -48,7 +48,7 @@ class BatchBill:
 
 
 class CashDesk:
-
+    """CashDesk represents a simple cash desk"""
     def __init__(self):
         self.cash = []
 
@@ -68,7 +68,7 @@ class CashDesk:
         result = "We have a total of {}$ in the desk" \
                  "\nWe have the following count of bills, " \
                  "sorted in ascending order:".format(self.total())
-        self.cash.sort(key=Bill.__int__)
+        self.cash.sort(key = Bill.__int__)
         for element in range(ZERO, len(self.cash)):
             bill = self.cash[element]
             if self.cash.index(bill) < element:
