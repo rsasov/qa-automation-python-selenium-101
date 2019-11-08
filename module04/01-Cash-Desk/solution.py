@@ -17,7 +17,9 @@ class Bill:
         return int(self.amount)
 
     def __eq__(self, other):
-        return self.__class__ == other.__class__ and self.amount == other.amount
+        if isinstance(other, Bill):
+            return self.__class__ == other.__class__ and self.amount == other.amount
+        return NotImplemented
 
     def __hash__(self):
         return hash(self.amount)
