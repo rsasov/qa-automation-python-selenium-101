@@ -147,7 +147,7 @@ class TestBankAccount_transfer_to(unittest.TestCase):
         self.assertEqual(account_1.balance(), 50)
         self.assertEqual(account_2.balance(), 60)
 
-    def test_transfer_more_than_vailable_balance_should_fail(self):
+    def test_transfer_more_than_аvailable_balance_should_fail(self):
         account_1 = BankAccount('For testing', 100, '$')
         account_2 = BankAccount('In dollars', 10, '$')
 
