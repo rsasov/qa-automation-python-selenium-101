@@ -1,14 +1,14 @@
-ZERO = 0
-
-
 class Bill:
     """Bill represents a single bill"""
     def __init__(self, amount):
-        self.checkParameter(amount)
+        if not isinstance(amount, int):
+            raise TypeError("Amount should be of type int")
+        if amount < 0:
+            raise ValueError("Negative amount is not supported")
         self.amount = amount
 
     def __str__(self):
-        return "A {}$ bill".format(self.amount)
+        return "A %s$ bill" % self.amount
 
     def __repr__(self):
         return 'Bill(amount=%s)' % self.amount
@@ -17,18 +17,13 @@ class Bill:
         return int(self.amount)
 
     def __eq__(self, other):
-        if isinstance(other, Bill):
-            return self.__class__ == other.__class__ and self.amount == other.amount
-        return NotImplemented
+        return self.__class__ == other.__class__ and self.amount == other.amount
 
     def __hash__(self):
         return hash(self.amount)
 
-    def checkParameter(self, amount):
-        if not isinstance(amount, int):
-            raise TypeError("Amount should be of type int")
-        if amount < ZERO:
-            raise ValueError("Negative amount is not supported")
+    def __lt__(self, other):
+        return self.amount < other.amount
 
 
 class BatchBill:
@@ -43,7 +38,7 @@ class BatchBill:
         return self.batch[index]
 
     def total(self):
-        total = ZERO
+        total = 0
         for bill in self.batch:
             total += bill.amount
         return total
@@ -52,28 +47,32 @@ class BatchBill:
 class CashDesk:
     """CashDesk represents a simple cash desk"""
     def __init__(self):
-        self.cash = []
+        self.cash = {}
 
     def take_money(self, money):
         if isinstance(money, Bill):
-            self.cash.append(money)
+            self.add_money_to_cash_desk(money)
         if isinstance(money, BatchBill):
-            self.cash.extend(money)
+            for bill in money:
+                self.add_money_to_cash_desk(bill)
 
     def total(self):
-        total = ZERO
+        total = 0
         for bill in self.cash:
-            total += bill.amount
+            bill_sum = self.cash.get(bill) * bill.__int__()
+            total += bill_sum
         return total
 
     def inspect(self):
-        result = "We have a total of {}$ in the desk" \
+        result = "We have a total of %s$ in the desk" \
                  "\nWe have the following count of bills, " \
-                 "sorted in ascending order:".format(self.total())
-        self.cash.sort(key = Bill.__int__)
-        for element in range(ZERO, len(self.cash)):
-            bill = self.cash[element]
-            if self.cash.index(bill) < element:
-                continue
-            result += "\n{}$ bills - {}".format(bill.__int__(), self.cash.count(bill))
+                 "sorted in ascending order:" % self.total()
+        for bill in sorted(self.cash):
+            result += "\n%s$ bills - %s" % (bill.__int__(), self.cash.get(bill))
         return result
+
+    def add_money_to_cash_desk(self, money):
+        if self.cash.__contains__(money):
+            self.cash[money] += 1
+        else:
+            self.cash[money] = 1
