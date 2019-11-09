@@ -17,7 +17,9 @@ class Bill:
         return int(self.amount)
 
     def __eq__(self, other):
-        return self.__class__ == other.__class__ and self.amount == other.amount
+        if isinstance(other, Bill):
+            return self.amount == other.amount
+        return False
 
     def __hash__(self):
         return hash(self.amount)
@@ -59,7 +61,7 @@ class CashDesk:
     def total(self):
         total = 0
         for bill in self.cash:
-            bill_sum = self.cash.get(bill) * bill.__int__()
+            bill_sum = self.cash.get(bill) * int(bill)
             total += bill_sum
         return total
 
@@ -68,11 +70,11 @@ class CashDesk:
                  "\nWe have the following count of bills, " \
                  "sorted in ascending order:" % self.total()
         for bill in sorted(self.cash):
-            result += "\n%s$ bills - %s" % (bill.__int__(), self.cash.get(bill))
+            result += "\n%s$ bills - %s" % (int(bill), self.cash.get(bill))
         return result
 
     def add_money_to_cash_desk(self, money):
-        if self.cash.__contains__(money):
+        if money in self.cash:
             self.cash[money] += 1
         else:
             self.cash[money] = 1
