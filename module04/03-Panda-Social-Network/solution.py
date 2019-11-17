@@ -10,7 +10,6 @@ class Panda:
         self.panda_name = name
         self.panda_email = email
         self.panda_gender = gender
-        self.friend_list = []
 
     def __str__(self):
         return "%s panda named %s with email: %s" % (self.panda_gender.capitalize(), self.panda_name, self.panda_email)
@@ -52,12 +51,6 @@ class Panda:
     def is_female(self):
         return self.panda_gender == "female"
 
-    def add_friend(self, panda):
-        self.friend_list.append(panda)
-
-    def friends(self):
-        return self.friend_list
-
 
 class PandaSocialNetwork:
     """ Social network that can handle: adding of new :class:`Panda` users, making pandas friends,
@@ -65,12 +58,13 @@ class PandaSocialNetwork:
     exist in pandas network"""
 
     def __init__(self):
-        self.network = []
+        self.network = {}
 
     def add_panda(self, panda):
         if self.has_panda(panda):
             raise PandaAlreadyThere()
-        self.network.append(panda)
+        network_entry = {panda: list()}
+        self.network.update(network_entry)
 
     def has_panda(self, panda):
         return panda in self.network
@@ -79,8 +73,14 @@ class PandaSocialNetwork:
         if self.are_friends(panda1, panda2):
             raise PandasAlreadyFriends()
         self._assure_network_presence(panda1, panda2)
-        panda1.add_friend(panda2)
-        panda2.add_friend(panda1)
+        self.add_friend(panda2, panda1)
+        self.add_friend(panda1, panda2)
+
+    def add_friend(self, panda, friend):
+        friends = self.network.get(panda)
+        friends.append(friend)
+        updated_entry = {panda: friends}
+        self.network.update(updated_entry)
 
     def _assure_network_presence(self, panda1, panda2):
         if panda1 not in self.network:
@@ -88,21 +88,22 @@ class PandaSocialNetwork:
         if panda2 not in self.network:
             self.add_panda(panda2)
 
-    @staticmethod
-    def are_friends(panda1, panda2):
-        if not panda1.friends() or not panda2.friends():
+    def are_friends(self, panda1, panda2):
+        panda1_friends = self.network.get(panda1)
+        panda2_friends = self.network.get(panda2)
+        if not panda1_friends or not panda2_friends:
             return False
-        return panda1 in panda2.friends() and panda2 in panda1.friends()
+        return panda1 in panda2_friends and panda2 in panda1_friends
 
     def friends_of(self, panda):
         if not self.has_panda(panda):
             return False
-        return panda.friends()
+        return self.network.get(panda)
 
     def connection_level(self, panda1, panda2):
         if not self.has_panda(panda1) or not self.has_panda(panda1):
             return False
-        if not panda1.friends():
+        if not self.network.get(panda1):
             return -1
         checked_pandas = []
         return self._calculate_connection_level(checked_pandas, panda1, panda2)
