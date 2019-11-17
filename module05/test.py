@@ -5,6 +5,7 @@ from io import StringIO
 
 import test_calculator
 
+
 class TestCalculatorTestCase(unittest.TestCase):
     def setUp(self):
         """
