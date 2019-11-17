@@ -73,10 +73,10 @@ class PandaSocialNetwork:
         if self.are_friends(panda1, panda2):
             raise PandasAlreadyFriends()
         self._assure_network_presence(panda1, panda2)
-        self.add_friend(panda2, panda1)
-        self.add_friend(panda1, panda2)
+        self._add_friend(panda2, panda1)
+        self._add_friend(panda1, panda2)
 
-    def add_friend(self, panda, friend):
+    def _add_friend(self, panda, friend):
         friends = self.network.get(panda)
         friends.append(friend)
         updated_entry = {panda: friends}
