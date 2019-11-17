@@ -6,7 +6,7 @@ class Panda:
     email, gender and list of friends"""
 
     def __init__(self, name, email, gender):
-        self.validate_input(name, email, gender)
+        self._validate_input(name, email, gender)
         self.panda_name = name
         self.panda_email = email
         self.panda_gender = gender
@@ -17,23 +17,23 @@ class Panda:
 
     def __eq__(self, other):
         if isinstance(other, Panda):
-            return self.__key() == other.__key()
-        raise NotImplemented
+            return self._key() == other._key()
+        return False
 
     def __hash__(self):
-        return hash(self.__key())
+        return hash(self._key())
 
-    def __key(self):
+    def _key(self):
         return self.panda_name, self.panda_email, self.panda_gender
 
-    def validate_input(self, name, email, gender):
+    def _validate_input(self, name, email, gender):
         if not name or not email or not gender:
             raise ValueError("Input not provided")
-        if not self.is_valid_email(email):
+        if not self._is_valid_email(email):
             raise ValueError("Not valid email provided")
 
     @staticmethod
-    def is_valid_email(email):
+    def _is_valid_email(email):
         email_regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         return re.search(email_regex, email)
 
@@ -77,12 +77,12 @@ class PandaSocialNetwork:
 
     def make_friends(self, panda1, panda2):
         if self.are_friends(panda1, panda2):
-            raise PandasAlreadyFriends
-        self.add_pandas_to_network_if_absent(panda1, panda2)
+            raise PandasAlreadyFriends()
+        self._assure_network_presence(panda1, panda2)
         panda1.add_friend(panda2)
         panda2.add_friend(panda1)
 
-    def add_pandas_to_network_if_absent(self, panda1, panda2):
+    def _assure_network_presence(self, panda1, panda2):
         if panda1 not in self.network:
             self.add_panda(panda1)
         if panda2 not in self.network:
@@ -105,21 +105,20 @@ class PandaSocialNetwork:
         if not panda1.friends():
             return -1
         checked_pandas = []
-        return self.__calculate_connection_level(checked_pandas, panda1, panda2)
+        return self._calculate_connection_level(checked_pandas, panda1, panda2)
 
-    def __calculate_connection_level(self, checked_pandas, panda1, panda2, count=0):
+    def _calculate_connection_level(self, checked_pandas, panda1, panda2, count=0):
         count += 1
-        self.update_checked_pandas(checked_pandas, panda1)
+        self._update_checked_pandas(checked_pandas, panda1)
         if self.are_friends(panda1, panda2):
             return count
         for panda in self.friends_of(panda1):
-            if panda in checked_pandas:
-                continue
-            return self.__calculate_connection_level(checked_pandas, panda, panda2, count)
+            if panda not in checked_pandas:
+                return self._calculate_connection_level(checked_pandas, panda, panda2, count)
         return -1
 
     @staticmethod
-    def update_checked_pandas(checked_pandas, panda):
+    def _update_checked_pandas(checked_pandas, panda):
         if panda not in checked_pandas:
             checked_pandas.append(panda)
 
@@ -129,17 +128,16 @@ class PandaSocialNetwork:
     def how_many_gender_in_network(self, level, panda, gender, count=0, current_level=0, checked_pandas=None):
         if current_level == 0 and checked_pandas is None:
             checked_pandas = list()
-            self.update_checked_pandas(checked_pandas, panda)
+            self._update_checked_pandas(checked_pandas, panda)
         if panda not in checked_pandas and panda.gender() == gender:
             count += 1
-            self.update_checked_pandas(checked_pandas, panda)
+            self._update_checked_pandas(checked_pandas, panda)
         if current_level == level:
             return count
         current_level += 1
         for panda_friend in self.friends_of(panda):
-            if panda_friend in checked_pandas:
-                continue
-            count = self.how_many_gender_in_network(level, panda_friend, gender, count, current_level, checked_pandas)
+            if panda_friend not in checked_pandas:
+                count = self.how_many_gender_in_network(level, panda_friend, gender, count, current_level, checked_pandas)
         return count
 
 
